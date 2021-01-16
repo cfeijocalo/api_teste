@@ -37,8 +37,8 @@ public class PedidoController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<PedidoResponse> updatePedido(@PathVariable("id") Long id, @RequestBody PedidoPayload pedido) {
+    @PutMapping()
+    public ResponseEntity<PedidoResponse> updatePedido(@RequestBody PedidoPayload pedido) {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

@@ -1,14 +1,12 @@
 package com.me.teste.api_teste.model.table;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import lombok.AllArgsConstructor;
@@ -19,8 +17,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "orders")
-public class Orders {
+@Table(name = "order_items")
+public class OrderItems {
 
     @Getter
     @Setter
@@ -30,12 +28,24 @@ public class Orders {
 
     @Getter
     @Setter
-    @Column(name = "status")
-    private String status;
+    @Column(name = "quantity")
+    private Long quantity;
 
     @Getter
     @Setter
-    @OneToMany(mappedBy = "item")
-    private List<OrderItems> items = new ArrayList<>();
+    @Column(name = "unit_price")
+    private Double unitPrice;
+
+    @Getter
+    @Setter
+    @ManyToOne
+    @JoinColumn(name = "fk_order")
+    private Orders order;
+
+    @Getter
+    @Setter
+    @ManyToOne
+    @JoinColumn(name = "fk_item")
+    private Items item;
 
 }
