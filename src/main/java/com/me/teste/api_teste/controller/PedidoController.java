@@ -2,8 +2,7 @@ package com.me.teste.api_teste.controller;
 
 import com.me.teste.api_teste.model.payload.PedidoPayload;
 import com.me.teste.api_teste.model.response.PedidoResponse;
-import com.me.teste.api_teste.repository.ItemsRepository;
-import com.me.teste.api_teste.repository.OrdersRepository;
+import com.me.teste.api_teste.service.PedidoService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,10 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class PedidoController {
 
     @Autowired
-    OrdersRepository ordersRepository;
-
-    @Autowired
-    ItemsRepository itemsRepository;
+    PedidoService service;
 
     @GetMapping("/{id}")
     public ResponseEntity<PedidoResponse> getPedido(@PathVariable("id") Long id) {
@@ -34,7 +30,7 @@ public class PedidoController {
 
     @PostMapping
     public ResponseEntity<PedidoResponse> createPedido(@RequestBody PedidoPayload pedido) {
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(service.create(pedido), HttpStatus.OK);
     }
 
     @PutMapping()
