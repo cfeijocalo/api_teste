@@ -41,18 +41,18 @@ public class OrderItems implements IModel {
     @Getter
     @Setter
     @Column(name = "unit_price")
-    private Double unitPrice;
+    private Integer unitPrice;
 
     @Getter
     @Setter
-    @ManyToOne
-    @JoinColumn(name = "fk_order")
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "fk_order", nullable = false)
     private Orders order;
 
     @Getter
     @Setter
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "fk_item")
+    @JoinColumn(name = "fk_item", nullable = false)
     private Items item;
 
 }

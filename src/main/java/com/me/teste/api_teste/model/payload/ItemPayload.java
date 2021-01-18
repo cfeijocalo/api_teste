@@ -2,27 +2,27 @@ package com.me.teste.api_teste.model.payload;
 
 import com.me.teste.api_teste.model.IModel;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@RequiredArgsConstructor
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ItemPayload implements IModel {
 
     @Getter
     @Setter
-    @NonNull
     private String descricao;
 
     @Getter
     @Setter
-    @NonNull
-    private Double precoUnitario;
+    private Integer precoUnitario;
 
     @Getter
     @Setter
-    @NonNull
     private Integer qtd;
 
 }

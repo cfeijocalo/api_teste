@@ -6,7 +6,9 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -37,7 +39,8 @@ public class Orders implements IModel {
 
     @Getter
     @Setter
-    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
-    private List<OrderItems> items = new ArrayList<>();
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "fk_order")
+    private List<OrderItems> items;
 
 }
