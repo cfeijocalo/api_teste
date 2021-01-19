@@ -31,7 +31,7 @@ public class Items implements IModel {
 
     @Getter
     @Setter
-    @Column(name = "description", unique = true)
+    @Column(name = "description")
     private String description;
 
 }

@@ -1,5 +1,6 @@
 package com.me.teste.api_teste.model.table;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -8,6 +9,8 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 
 import com.me.teste.api_teste.model.IModel;
@@ -40,5 +43,25 @@ public class Orders implements IModel {
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "fk_order")
     private List<OrderItems> items;
+
+    @Getter
+    @Setter
+    @Column(name = "create_at")
+    private Date createdAt;
+
+    @Getter
+    @Setter
+    @Column(name = "modified_at")
+    private Date modifiedAt;
+
+    @PrePersist
+    void createdAt() {
+        this.createdAt = new Date();
+    }
+
+    @PreUpdate
+    void modifiedAt() {
+        this.modifiedAt = new Date();
+    }
 
 }
