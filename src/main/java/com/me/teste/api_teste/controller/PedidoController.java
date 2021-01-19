@@ -25,7 +25,12 @@ public class PedidoController {
 
     @GetMapping("/{id}")
     public ResponseEntity<PedidoResponse> getPedido(@PathVariable("id") String id) {
-        return new ResponseEntity<>(service.find(id), HttpStatus.OK);
+        PedidoResponse response = service.find(id);
+        if (response != null) {
+            return new ResponseEntity<>(service.find(id), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
     }
 
     @PostMapping

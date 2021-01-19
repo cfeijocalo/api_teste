@@ -21,7 +21,13 @@ public class ModelConverter {
         if (payload != null) {
             List<OrderItems> items = convertsPayloadToTable(payload.getItens());
             items.forEach(el -> el.setOrder(Orders.builder().id(payload.getPedido()).items(items).build()));
-            orders = Orders.builder().id(payload.getPedido()).items(items).build();
+
+            orders = Orders.builder()
+                    .id(payload.getPedido())
+                    .totalQuantity(items.stream().mapToInt(OrderItems::getQuantity).sum())
+                    .totalPrice(items.stream().mapToInt(el -> el.getUnitPrice() * el.getQuantity()).sum())
+                    .items(items)
+                    .build();
         }
         return orders;
     }

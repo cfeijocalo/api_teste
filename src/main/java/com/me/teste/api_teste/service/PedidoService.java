@@ -10,7 +10,6 @@ import com.me.teste.api_teste.model.payload.PedidoPayload;
 import com.me.teste.api_teste.model.response.PedidoResponse;
 import com.me.teste.api_teste.model.table.OrderItems;
 import com.me.teste.api_teste.model.table.Orders;
-import com.me.teste.api_teste.repository.ItemsRepository;
 import com.me.teste.api_teste.repository.OrdersRepository;
 import com.me.teste.api_teste.util.ModelConverter;
 import com.me.teste.api_teste.util.StatusEnum;
@@ -24,9 +23,6 @@ public class PedidoService {
 
     @Autowired
     OrdersRepository ordersRepository;
-
-    @Autowired
-    ItemsRepository itemsRepository;
 
     private List<String> validate(PedidoPayload pedido) {
         OrderNumberValidator validator = new OrderNumberValidator();
@@ -46,6 +42,33 @@ public class PedidoService {
         } else {
             return null;
         }
+    }
+
+    private List<OrderItems> updateOrderItems(List<OrderItems> base, List<OrderItems> newValues) {
+        for (int i = 0; i < base.size(); i++) {
+            base.get(i).setQuantity(newValues.get(i).getQuantity());
+            base.get(i).setUnitPrice(newValues.get(i).getUnitPrice());
+            base.get(i).getItem().setDescription(newValues.get(i).getItem().getDescription());
+        }
+        return base;
+    }
+
+    private void updateOrders(Orders base, Orders newValues) {
+        if (base.getItems().size() == newValues.getItems().size()) {
+            base.setItems(updateOrderItems(base.getItems(), newValues.getItems()));
+        } else if (base.getItems().size() < newValues.getItems().size()) {
+            base.setItems(updateOrderItems(base.getItems(), newValues.getItems()));
+            for (int i = base.getItems().size(); i < newValues.getItems().size(); i++) {
+                base.getItems().add(newValues.getItems().get(i));
+            }
+        } else {
+            for (int i = base.getItems().size() - 1; i > newValues.getItems().size() - 1; i--) {
+                base.getItems().remove(i);
+            }
+            base.setItems(updateOrderItems(base.getItems(), newValues.getItems()));
+        }
+        base.setTotalQuantity(newValues.getTotalQuantity());
+        base.setTotalPrice(newValues.getTotalPrice());
     }
 
     public PedidoResponse find(String id) {
@@ -86,17 +109,7 @@ public class PedidoService {
             } else {
                 Orders orders = findOrder(pedido.getPedido());
                 if (orders != null) {
-                    Orders ordersAux = ModelConverter.convertsPayloadToTable(pedido);
-                    // if (orders.getItems().size() == ordersAux.getItems().size()) {
-
-                    // } else if (orders.getItems().size() < ordersAux.getItems().size()) {
-
-                    // } else {
-
-                    // }
-                    List<OrderItems> orderItems = orders.getItems();
-
-                    orders.setItems(orderItems);
+                    updateOrders(orders, ModelConverter.convertsPayloadToTable(pedido));
                     ordersRepository.save(orders);
                 }
             }

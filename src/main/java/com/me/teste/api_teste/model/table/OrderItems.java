@@ -46,13 +46,13 @@ public class OrderItems implements IModel {
     @Getter
     @Setter
     @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.DETACH, CascadeType.REMOVE })
-    @JoinColumn(name = "fk_order")
+    @JoinColumn(name = "orders_id")
     private Orders order;
 
     @Getter
     @Setter
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "fk_item")
+    @JoinColumn(name = "item_id")
     private Items item;
 
 }

@@ -40,8 +40,18 @@ public class Orders implements IModel {
 
     @Getter
     @Setter
+    @Column(name = "total_price")
+    private Integer totalPrice;
+
+    @Getter
+    @Setter
+    @Column(name = "total_quantity")
+    private Integer totalQuantity;
+
+    @Getter
+    @Setter
     @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "fk_order")
+    @JoinColumn(name = "orders_id")
     private List<OrderItems> items;
 
     @Getter
