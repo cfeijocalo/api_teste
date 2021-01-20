@@ -94,34 +94,57 @@ public class PedidoService extends Service<PedidoPayload, Orders> {
         }
     }
 
-    public PedidoResponse create(PedidoPayload pedido) {
-        if (pedido != null) {
-            List<String> status = validate(pedido, null);
-            if (!status.isEmpty()) {
-                return new PedidoResponse(pedido.getPedido(), pedido.getItens(), status);
+    public ResponseEntity<IResponse> create(PedidoPayload pedido) {
+        try {
+            if (pedido != null) {
+                List<String> status = validate(pedido, null);
+                if (!status.isEmpty()) {
+                    throw new IllegalArgumentException(status.toString());
+                } else {
+                    if (findOrder(pedido.getPedido()) == null) {
+                        Orders order = ModelConverter.convertsPayloadToTable(pedido);
+                        order.setStatus("CREATED");
+                        ordersRepository.save(order);
+                        return new ResponseEntity<>(HttpStatus.OK);
+                    } else {
+                        return new ResponseEntity<>(HttpStatus.CONFLICT);
+                    }
+                }
             } else {
-                Orders order = ModelConverter.convertsPayloadToTable(pedido);
-                order.setStatus("CREATED");
-                ordersRepository.save(order);
+                throw new IllegalArgumentException("The payload can't be null");
             }
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(ErrorResponse.builder().error(e.getClass().getName()).message(e.getMessage())
+                    .status(HttpStatus.BAD_REQUEST.value()).build(), HttpStatus.BAD_REQUEST);
         }
-        return null;
     }
 
-    public PedidoResponse update(PedidoPayload pedido) {
-        if (pedido != null) {
-            List<String> status = validate(pedido, null);
-            if (!status.isEmpty()) {
-                return new PedidoResponse(pedido.getPedido(), pedido.getItens(), status);
-            } else {
-                Orders orders = findOrder(pedido.getPedido());
-                if (orders != null) {
-                    updateOrders(orders, ModelConverter.convertsPayloadToTable(pedido));
-                    ordersRepository.save(orders);
+    public ResponseEntity<IResponse> update(PedidoPayload pedido) {
+        try {
+            if (pedido != null) {
+                List<String> status = validate(pedido, null);
+                if (!status.isEmpty()) {
+                    throw new IllegalArgumentException(status.toString());
+                } else {
+                    Orders orders = findOrder(pedido.getPedido());
+                    if (orders != null) {
+                        updateOrders(orders, ModelConverter.convertsPayloadToTable(pedido));
+                        ordersRepository.save(orders);
+                        return new ResponseEntity<>(HttpStatus.OK);
+                    } else {
+                        Orders order = ModelConverter.convertsPayloadToTable(pedido);
+                        ordersRepository.save(order);
+                        return new ResponseEntity<>(HttpStatus.OK);
+                    }
                 }
+            } else {
+                throw new IllegalArgumentException("The payload can't be null");
             }
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(ErrorResponse.builder().error(e.getClass().getName()).message(e.getMessage())
+                    .status(HttpStatus.BAD_REQUEST.value()).build(), HttpStatus.BAD_REQUEST);
         }
-        return null;
+
     }
 
     public PedidoResponse delete(String id) {

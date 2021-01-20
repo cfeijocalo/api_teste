@@ -30,12 +30,12 @@ public class PedidoController {
 
     @PostMapping
     public ResponseEntity<IResponse> createPedido(@RequestBody PedidoPayload pedido) {
-        return new ResponseEntity<>(service.create(pedido), HttpStatus.OK);
+        return service.create(pedido);
     }
 
     @PutMapping()
     public ResponseEntity<IResponse> updatePedido(@RequestBody PedidoPayload pedido) {
-        return new ResponseEntity<>(service.update(pedido), HttpStatus.OK);
+        return service.update(pedido);
     }
 
     @DeleteMapping("/{id}")
