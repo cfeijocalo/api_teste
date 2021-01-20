@@ -10,7 +10,7 @@ public class OrderNumberValidator extends ValidatorChain<PedidoPayload, Orders> 
 
     @Override
     public List<StatusEnum> check(PedidoPayload payload, Orders entity, List<StatusEnum> status) {
-        if (payload != null && !payload.getPedido().matches("\\d+")) {
+        if (payload == null || payload.getPedido().isEmpty() || !payload.getPedido().matches("\\d+")) {
             status.add(StatusEnum.INVALID_ORDER_NUMBER);
             return status;
         } else {
