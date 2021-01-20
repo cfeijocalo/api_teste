@@ -13,7 +13,7 @@ import lombok.Setter;
 
 @NoArgsConstructor
 @AllArgsConstructor
-public class PedidoResponse extends PedidoPayload {
+public class PedidoResponse extends PedidoPayload implements IResponse {
 
     @Getter
     @Setter

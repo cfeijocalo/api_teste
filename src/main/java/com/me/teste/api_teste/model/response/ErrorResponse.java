@@ -1,4 +1,4 @@
-package com.me.teste.api_teste.model.payload;
+package com.me.teste.api_teste.model.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,18 +9,18 @@ import lombok.Setter;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ItemPayload implements IPayload {
+public class ErrorResponse implements IResponse {
 
     @Getter
     @Setter
-    private String descricao;
+    private String error;
 
     @Getter
     @Setter
-    private Integer precoUnitario;
+    private Integer status;
 
     @Getter
     @Setter
-    private Integer qtd;
+    private String message;
 
 }

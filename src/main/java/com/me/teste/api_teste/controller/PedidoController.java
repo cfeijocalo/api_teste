@@ -1,7 +1,7 @@
 package com.me.teste.api_teste.controller;
 
 import com.me.teste.api_teste.model.payload.PedidoPayload;
-import com.me.teste.api_teste.model.response.PedidoResponse;
+import com.me.teste.api_teste.model.response.IResponse;
 import com.me.teste.api_teste.service.PedidoService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,22 +24,17 @@ public class PedidoController {
     PedidoService service;
 
     @GetMapping("/{id}")
-    public ResponseEntity<PedidoResponse> getPedido(@PathVariable("id") String id) {
-        PedidoResponse response = service.find(id);
-        if (response != null) {
-            return new ResponseEntity<>(service.find(id), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
+    public ResponseEntity<IResponse> getPedido(@PathVariable("id") String id) {
+        return service.find(id);
     }
 
     @PostMapping
-    public ResponseEntity<PedidoResponse> createPedido(@RequestBody PedidoPayload pedido) {
+    public ResponseEntity<IResponse> createPedido(@RequestBody PedidoPayload pedido) {
         return new ResponseEntity<>(service.create(pedido), HttpStatus.OK);
     }
 
     @PutMapping()
-    public ResponseEntity<PedidoResponse> updatePedido(@RequestBody PedidoPayload pedido) {
+    public ResponseEntity<IResponse> updatePedido(@RequestBody PedidoPayload pedido) {
         return new ResponseEntity<>(service.update(pedido), HttpStatus.OK);
     }
 

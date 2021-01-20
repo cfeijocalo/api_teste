@@ -4,22 +4,22 @@ import java.util.List;
 
 import com.me.teste.api_teste.util.StatusEnum;
 
-public abstract class ValidatorChain<T, S> {
+public abstract class ValidatorChain<T, E> {
 
-    private ValidatorChain<T, S> next;
+    private ValidatorChain<T, E> next;
 
-    public ValidatorChain<T, S> linkWith(ValidatorChain<T, S> next) {
+    public ValidatorChain<T, E> linkWith(ValidatorChain<T, E> next) {
         this.next = next;
         return next;
     }
 
-    public abstract List<StatusEnum> check(T payload, S tables, List<StatusEnum> status);
+    public abstract List<StatusEnum> check(T payload, E entity, List<StatusEnum> status);
 
-    protected List<StatusEnum> checkNext(T payload, S tables, List<StatusEnum> status) {
+    protected List<StatusEnum> checkNext(T payload, E entity, List<StatusEnum> status) {
         if (next == null) {
             return status;
         }
-        return next.check(payload, tables, status);
+        return next.check(payload, entity, status);
     }
 
 }

@@ -1,7 +1,5 @@
 package com.me.teste.api_teste.model.payload;
 
-import com.me.teste.api_teste.model.IModel;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,7 +7,7 @@ import lombok.Setter;
 
 @NoArgsConstructor
 @AllArgsConstructor
-public class StatusPayload implements IModel {
+public class StatusPayload implements IPayload {
 
     @Getter
     @Setter

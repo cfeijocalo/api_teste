@@ -10,7 +10,7 @@ public enum StatusEnum {
     APPROVED_GREATER_QUANTITY("APROVADO_QTD_A_MAIOR"),
     DISAPPROVED("REPROVADO"),
     INVALID_ORDER_NUMBER("CODIGO_PEDIDO_INVALIDO");
-
+    
     @Getter
     private String message;
 

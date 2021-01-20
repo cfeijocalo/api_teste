@@ -1,12 +1,12 @@
 package com.me.teste.api_teste.service;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import com.me.teste.api_teste.model.payload.ItemPayload;
 import com.me.teste.api_teste.model.payload.PedidoPayload;
+import com.me.teste.api_teste.model.response.ErrorResponse;
+import com.me.teste.api_teste.model.response.IResponse;
 import com.me.teste.api_teste.model.response.PedidoResponse;
 import com.me.teste.api_teste.model.table.OrderItems;
 import com.me.teste.api_teste.model.table.Orders;
@@ -16,17 +16,20 @@ import com.me.teste.api_teste.util.StatusEnum;
 import com.me.teste.api_teste.validator.OrderNumberValidator;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 @Component
-public class PedidoService {
+public class PedidoService extends Service<PedidoPayload, Orders> {
 
     @Autowired
     OrdersRepository ordersRepository;
 
-    private List<String> validate(PedidoPayload pedido) {
+    @Override
+    protected List<String> validate(PedidoPayload payload, Orders entity) {
         OrderNumberValidator validator = new OrderNumberValidator();
-        List<StatusEnum> status = validator.check(pedido, null, new ArrayList<>());
+        List<StatusEnum> status = validator.check(payload, null, new ArrayList<>());
         if (!status.isEmpty()) {
             List<String> statusMessage = new ArrayList<>();
             status.forEach(element -> statusMessage.add(element.getMessage()));
@@ -35,7 +38,8 @@ public class PedidoService {
         return new ArrayList<>();
     }
 
-    private Orders findOrder(String id) {
+    @Override
+    protected Orders findOrder(String id) throws IllegalArgumentException {
         Optional<Orders> order = ordersRepository.findById(id);
         if (order.isPresent()) {
             return order.get();
@@ -71,25 +75,28 @@ public class PedidoService {
         base.setTotalPrice(newValues.getTotalPrice());
     }
 
-    public PedidoResponse find(String id) {
-        if (id != null) {
-            Orders orders = findOrder(id);
-            PedidoResponse response = null;
-            if (orders != null) {
-                List<ItemPayload> items = new ArrayList<>();
-                orders.getItems().forEach(el -> items.add(ItemPayload.builder().descricao(el.getItem().getDescription())
-                        .precoUnitario(el.getUnitPrice()).qtd(el.getQuantity()).build()));
-                response = PedidoResponse.builder().pedido(orders.getId()).itens(items)
-                        .status(Arrays.asList(orders.getStatus())).build();
+    public ResponseEntity<IResponse> find(String id) {
+        try {
+            List<String> status = validate(new PedidoPayload(id), null);
+            if (!status.isEmpty()) {
+                throw new IllegalArgumentException(status.toString());
+            } else {
+                Orders orders = findOrder(id);
+                if (orders != null) {
+                    return new ResponseEntity<>(ModelConverter.convertsTableToResponse(orders), HttpStatus.OK);
+                } else {
+                    return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+                }
             }
-            return response;
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(ErrorResponse.builder().error(e.getClass().getName()).message(e.getMessage())
+                    .status(HttpStatus.BAD_REQUEST.value()).build(), HttpStatus.BAD_REQUEST);
         }
-        return null;
     }
 
     public PedidoResponse create(PedidoPayload pedido) {
         if (pedido != null) {
-            List<String> status = validate(pedido);
+            List<String> status = validate(pedido, null);
             if (!status.isEmpty()) {
                 return new PedidoResponse(pedido.getPedido(), pedido.getItens(), status);
             } else {
@@ -103,7 +110,7 @@ public class PedidoService {
 
     public PedidoResponse update(PedidoPayload pedido) {
         if (pedido != null) {
-            List<String> status = validate(pedido);
+            List<String> status = validate(pedido, null);
             if (!status.isEmpty()) {
                 return new PedidoResponse(pedido.getPedido(), pedido.getItens(), status);
             } else {
