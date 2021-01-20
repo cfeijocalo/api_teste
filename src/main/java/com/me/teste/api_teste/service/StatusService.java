@@ -11,7 +11,7 @@ import com.me.teste.api_teste.model.response.StatusResponse;
 import com.me.teste.api_teste.model.table.Orders;
 import com.me.teste.api_teste.repository.OrdersRepository;
 import com.me.teste.api_teste.util.StatusEnum;
-import com.me.teste.api_teste.validator.ApprovedValidator;
+import com.me.teste.api_teste.validator.StatusValidator;
 import com.me.teste.api_teste.validator.OrderNumberStatusValidator;
 import com.me.teste.api_teste.validator.PriceValidator;
 import com.me.teste.api_teste.validator.QuantityValidator;
@@ -30,7 +30,7 @@ public class StatusService extends Service<StatusPayload, Orders> {
 
     @Override
     protected List<String> validate(StatusPayload payload, Orders entity) {
-        ValidatorChain<StatusPayload, Orders> validator = new ApprovedValidator();
+        ValidatorChain<StatusPayload, Orders> validator = new StatusValidator();
         validator.linkWith(new QuantityValidator()).linkWith(new PriceValidator());
         List<StatusEnum> status = validator.check(payload, entity, new ArrayList<>());
         if (!status.isEmpty()) {
