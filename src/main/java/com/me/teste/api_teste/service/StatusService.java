@@ -11,10 +11,10 @@ import com.me.teste.api_teste.model.response.StatusResponse;
 import com.me.teste.api_teste.model.table.Orders;
 import com.me.teste.api_teste.repository.OrdersRepository;
 import com.me.teste.api_teste.util.StatusEnum;
-import com.me.teste.api_teste.validator.StatusValidator;
 import com.me.teste.api_teste.validator.OrderNumberStatusValidator;
 import com.me.teste.api_teste.validator.PriceValidator;
 import com.me.teste.api_teste.validator.QuantityValidator;
+import com.me.teste.api_teste.validator.StatusValidator;
 import com.me.teste.api_teste.validator.ValidatorChain;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,7 +62,7 @@ public class StatusService extends Service<StatusPayload, Orders> {
         return new ArrayList<>();
     }
 
-    public ResponseEntity<IResponse> updateStatus(StatusPayload status) {
+    public ResponseEntity<StatusResponse> updateStatus(StatusPayload status) {
         if (status != null) {
             List<String> statusList = validateOrderId(status);
             if (statusList.contains(StatusEnum.INVALID_ORDER_NUMBER.getMessage())) {
@@ -91,7 +91,7 @@ public class StatusService extends Service<StatusPayload, Orders> {
                 }
             }
         } else {
-            return null;
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 

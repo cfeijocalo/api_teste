@@ -1,7 +1,7 @@
 package com.me.teste.api_teste.controller;
 
 import com.me.teste.api_teste.model.payload.StatusPayload;
-import com.me.teste.api_teste.model.response.IResponse;
+import com.me.teste.api_teste.model.response.StatusResponse;
 import com.me.teste.api_teste.service.StatusService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +19,7 @@ public class StatusController {
     StatusService service;
 
     @PostMapping
-    public ResponseEntity<IResponse> setStatus(@RequestBody StatusPayload status) {
+    public ResponseEntity<StatusResponse> setStatus(@RequestBody StatusPayload status) {
         return service.updateStatus(status);
     }
 

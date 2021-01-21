@@ -7,7 +7,6 @@ import java.util.Optional;
 import com.me.teste.api_teste.model.payload.PedidoPayload;
 import com.me.teste.api_teste.model.response.ErrorResponse;
 import com.me.teste.api_teste.model.response.IResponse;
-import com.me.teste.api_teste.model.response.PedidoResponse;
 import com.me.teste.api_teste.model.table.OrderItems;
 import com.me.teste.api_teste.model.table.Orders;
 import com.me.teste.api_teste.repository.OrdersRepository;
@@ -48,6 +47,13 @@ public class PedidoService extends Service<PedidoPayload, Orders> {
         }
     }
 
+    /**
+     * Update the base OrderItems with new values converted from payload.
+     * 
+     * @param base
+     * @param newValues
+     * @return
+     */
     private List<OrderItems> updateOrderItems(List<OrderItems> base, List<OrderItems> newValues) {
         for (int i = 0; i < base.size(); i++) {
             base.get(i).setQuantity(newValues.get(i).getQuantity());
@@ -57,6 +63,12 @@ public class PedidoService extends Service<PedidoPayload, Orders> {
         return base;
     }
 
+    /**
+     * Update the base Order with new values converted from payload.
+     * 
+     * @param base
+     * @param newValues
+     */
     private void updateOrders(Orders base, Orders newValues) {
         if (base.getItems().size() == newValues.getItems().size()) {
             base.setItems(updateOrderItems(base.getItems(), newValues.getItems()));
@@ -147,12 +159,14 @@ public class PedidoService extends Service<PedidoPayload, Orders> {
 
     }
 
-    public PedidoResponse delete(String id) {
+    public ResponseEntity<HttpStatus> delete(String id) {
         Orders orders = findOrder(id);
         if (orders != null) {
             ordersRepository.delete(orders);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        return null;
     }
 
 }

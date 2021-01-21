@@ -14,7 +14,7 @@ import lombok.Setter;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = false)
 public class PedidoResponse extends PedidoPayload implements IResponse {
 
     @Getter

@@ -40,7 +40,6 @@ public class PedidoController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<HttpStatus> deletePedido(@PathVariable("id") String id) {
-        service.delete(id);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return service.delete(id);
     }
 }
