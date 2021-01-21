@@ -143,12 +143,17 @@ public class PedidoService extends Service<PedidoPayload, Orders> {
     }
 
     public ResponseEntity<HttpStatus> delete(String id) {
-        Orders orders = findOrder(id);
-        if (orders != null) {
-            ordersRepository.delete(orders);
-            return new ResponseEntity<>(HttpStatus.OK);
+        List<String> status = validate(new PedidoPayload(id), null);
+        if (!status.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            Orders orders = findOrder(id);
+            if (orders != null) {
+                ordersRepository.delete(orders);
+                return new ResponseEntity<>(HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
         }
     }
 
