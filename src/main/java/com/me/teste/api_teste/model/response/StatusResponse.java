@@ -13,7 +13,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
-public class StatusResponse implements IResponse {
+public class StatusResponse {
 
     @Getter
     @Setter

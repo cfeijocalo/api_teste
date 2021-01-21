@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Optional;
 
 import com.me.teste.api_teste.model.payload.StatusPayload;
-import com.me.teste.api_teste.model.response.IResponse;
 import com.me.teste.api_teste.model.response.StatusResponse;
 import com.me.teste.api_teste.model.table.Orders;
 import com.me.teste.api_teste.repository.OrdersRepository;

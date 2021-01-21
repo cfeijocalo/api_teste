@@ -5,8 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.me.teste.api_teste.model.payload.PedidoPayload;
-import com.me.teste.api_teste.model.response.ErrorResponse;
-import com.me.teste.api_teste.model.response.IResponse;
+import com.me.teste.api_teste.model.response.PedidoResponse;
 import com.me.teste.api_teste.model.table.OrderItems;
 import com.me.teste.api_teste.model.table.Orders;
 import com.me.teste.api_teste.repository.OrdersRepository;
@@ -87,76 +86,60 @@ public class PedidoService extends Service<PedidoPayload, Orders> {
         base.setTotalPrice(newValues.getTotalPrice());
     }
 
-    public ResponseEntity<IResponse> find(String id) {
-        try {
-            List<String> status = validate(new PedidoPayload(id), null);
+    public ResponseEntity<PedidoResponse> find(String id) throws IllegalArgumentException {
+        List<String> status = validate(new PedidoPayload(id), null);
+        if (!status.isEmpty()) {
+            throw new IllegalArgumentException(status.toString());
+        } else {
+            Orders orders = findOrder(id);
+            if (orders != null) {
+                return new ResponseEntity<>(ModelConverter.convertsTableToResponse(orders), HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+        }
+    }
+
+    public ResponseEntity<PedidoResponse> create(PedidoPayload pedido) throws IllegalArgumentException {
+        if (pedido != null) {
+            List<String> status = validate(pedido, null);
             if (!status.isEmpty()) {
                 throw new IllegalArgumentException(status.toString());
             } else {
-                Orders orders = findOrder(id);
+                if (findOrder(pedido.getPedido()) == null) {
+                    Orders order = ModelConverter.convertsPayloadToTable(pedido);
+                    order.setStatus("CREATED");
+                    ordersRepository.save(order);
+                    return new ResponseEntity<>(HttpStatus.OK);
+                } else {
+                    return new ResponseEntity<>(HttpStatus.CONFLICT);
+                }
+            }
+        } else {
+            throw new IllegalArgumentException("The payload can't be null");
+        }
+    }
+
+    public ResponseEntity<PedidoResponse> update(PedidoPayload pedido) throws IllegalArgumentException {
+        if (pedido != null) {
+            List<String> status = validate(pedido, null);
+            if (!status.isEmpty()) {
+                throw new IllegalArgumentException(status.toString());
+            } else {
+                Orders orders = findOrder(pedido.getPedido());
                 if (orders != null) {
-                    return new ResponseEntity<>(ModelConverter.convertsTableToResponse(orders), HttpStatus.OK);
+                    updateOrders(orders, ModelConverter.convertsPayloadToTable(pedido));
+                    ordersRepository.save(orders);
+                    return new ResponseEntity<>(HttpStatus.OK);
                 } else {
-                    return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+                    Orders order = ModelConverter.convertsPayloadToTable(pedido);
+                    ordersRepository.save(order);
+                    return new ResponseEntity<>(HttpStatus.OK);
                 }
             }
-        } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(ErrorResponse.builder().error(e.getClass().getName()).message(e.getMessage())
-                    .status(HttpStatus.BAD_REQUEST.value()).build(), HttpStatus.BAD_REQUEST);
+        } else {
+            throw new IllegalArgumentException("The payload can't be null");
         }
-    }
-
-    public ResponseEntity<IResponse> create(PedidoPayload pedido) {
-        try {
-            if (pedido != null) {
-                List<String> status = validate(pedido, null);
-                if (!status.isEmpty()) {
-                    throw new IllegalArgumentException(status.toString());
-                } else {
-                    if (findOrder(pedido.getPedido()) == null) {
-                        Orders order = ModelConverter.convertsPayloadToTable(pedido);
-                        order.setStatus("CREATED");
-                        ordersRepository.save(order);
-                        return new ResponseEntity<>(HttpStatus.OK);
-                    } else {
-                        return new ResponseEntity<>(HttpStatus.CONFLICT);
-                    }
-                }
-            } else {
-                throw new IllegalArgumentException("The payload can't be null");
-            }
-        } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(ErrorResponse.builder().error(e.getClass().getName()).message(e.getMessage())
-                    .status(HttpStatus.BAD_REQUEST.value()).build(), HttpStatus.BAD_REQUEST);
-        }
-    }
-
-    public ResponseEntity<IResponse> update(PedidoPayload pedido) {
-        try {
-            if (pedido != null) {
-                List<String> status = validate(pedido, null);
-                if (!status.isEmpty()) {
-                    throw new IllegalArgumentException(status.toString());
-                } else {
-                    Orders orders = findOrder(pedido.getPedido());
-                    if (orders != null) {
-                        updateOrders(orders, ModelConverter.convertsPayloadToTable(pedido));
-                        ordersRepository.save(orders);
-                        return new ResponseEntity<>(HttpStatus.OK);
-                    } else {
-                        Orders order = ModelConverter.convertsPayloadToTable(pedido);
-                        ordersRepository.save(order);
-                        return new ResponseEntity<>(HttpStatus.OK);
-                    }
-                }
-            } else {
-                throw new IllegalArgumentException("The payload can't be null");
-            }
-        } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(ErrorResponse.builder().error(e.getClass().getName()).message(e.getMessage())
-                    .status(HttpStatus.BAD_REQUEST.value()).build(), HttpStatus.BAD_REQUEST);
-        }
-
     }
 
     public ResponseEntity<HttpStatus> delete(String id) {
